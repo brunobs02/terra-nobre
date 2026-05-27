@@ -128,17 +128,7 @@ Não há dependências, build steps ou package managers. É um único arquivo HT
 
 ---
 
-## Publicar no GitHub Pages
 
-```bash
-# Torne o script executável e rode
-chmod +x deploy.sh
-./deploy.sh
-```
-
-O script cria o repositório, faz o commit inicial e ativa o GitHub Pages automaticamente.
-
----
 
 ## Referências de Inspiração
 
