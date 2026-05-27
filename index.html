@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terra Nobre — Imóveis de Caráter</title>
+
+  <!--
+    ═══════════════════════════════════════════════════════════════
+    TERRA NOBRE — Landing Page de Portfólio
+    ═══════════════════════════════════════════════════════════════
+
+    Projeto fictício de imobiliária de luxo criado para portfólio.
+    Conceito: "Luxo orgânico" — a beleza do autêntico, não do ostentoso.
+
+    STACK:
+      → HTML5 semântico
+      → CSS puro com custom properties (sem frameworks)
+      → JavaScript vanilla (sem bibliotecas)
+      → SVG inline para todas as ilustrações
+      → Google Fonts (Fraunces + Cormorant Garamond + DM Sans)
+
+    DECISÕES DE DESIGN:
+      → Paleta baseada em elementos naturais (argila, areia, musgo, casca)
+      → Tipografia com três vozes: display / corpo / UI
+      → Ilustrações arquitetônicas em SVG puro (sem imagens externas)
+      → Granulado SVG sobreposto para sensação de impressão em papel
+      → Cursor customizado que expande em elementos interativos
+
+    AUTOR: Projeto de portfólio
+    INSPIRAÇÃO: lapa.ninja — melhores landing pages do mundo
+    ═══════════════════════════════════════════════════════════════
+  -->
+
+  <!--
+    FONTES — Três vozes distintas da marca:
+    • Fraunces: display serifada óptico-variável → headlines e números
+    • Cormorant Garamond: serif elegante → textos corridos
+    • DM Sans: sans-serif neutra → labels, botões, navegação
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,600&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+
+  <style>
+
+    /* ─────────────────────────────────────────────
+       RESET BÁSICO
+       Box-sizing universal + zera margin/padding
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─────────────────────────────────────────────
+       CUSTOM PROPERTIES — Sistema de design
+       Paleta extraída de elementos naturais:
+       sand  → areia de rio seco
+       clay  → argila úmida
+       earth → terra húmus
+       moss  → musgo em pedra
+       bark  → casca de peroba
+       cream → papel de carta antigo
+    ───────────────────────────────────────────── */
+    :root {
+      --sand:    #F2EAD8;
+      --sand-dk: #E0D3BA;
+      --clay:    #C4956A;
+      --clay-dk: #9B6A3E;
+      --earth:   #5C4033;
+      --moss:    #6B7C5C;
+      --bark:    #2E2118;
+      --cream:   #FAF6EE;
+      --stone:   #A89880;
+      --ivory:   #F7F2E8;
+
+      /* Aliases semânticos de fonte */
+      --ff-display: 'Fraunces', Georgia, serif;
+      --ff-body:    'Cormorant Garamond', Georgia, serif;
+      --ff-ui:      'DM Sans', sans-serif;
+    }
+
+    /* Scroll suave entre âncoras */
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--bark);
+      font-family: var(--ff-body);
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+      cursor: none; /* Cursor padrão removido — usamos o #cursor customizado */
+    }
+
+    /* ─────────────────────────────────────────────
+       CURSOR CUSTOMIZADO
+       Ponto em argila que segue o mouse via JS.
+       Em hover de elementos interativos, expande
+       para um círculo vazado (classe .expand).
+    ───────────────────────────────────────────── */
+    #cursor {
+      width: 10px; height: 10px;
+      background: var(--clay);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; /* Nunca intercepta cliques */
+      z-index: 9999;
+      transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease;
+      transform: translate(-50%, -50%); /* Centraliza no ponto do mouse */
+    }
+    #cursor.expand {
+      width: 40px; height: 40px;
+      background: transparent;
+      border: 1.5px solid var(--clay);
+    }
+
+    /* ─────────────────────────────────────────────
+       TEXTURA DE GRANULADO
+       SVG com feTurbulence aplicado como
+       pseudo-elemento fixed sobre toda a página.
+       Cria sensação de papel de impressão de
+       qualidade (como revistas de arquitetura).
+       opacity: 0.4 → sutil mas perceptível.
+    ───────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ════════════════════════════════════════════
+       NAVEGAÇÃO
+       Position fixed com mix-blend-mode: multiply
+       para integração visual com o hero.
+       Ao rolar, recebe fundo translúcido via JS.
+    ════════════════════════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 60px;
+      mix-blend-mode: multiply; /* Blend com o hero sand */
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .nav-logo {
+      font-family: var(--ff-display);
+      font-size: 22px; font-weight: 300;
+      color: var(--bark); text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .nav-logo span { color: var(--clay); font-style: italic; }
+
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: var(--ff-ui); font-size: 13px; font-weight: 300;
+      color: var(--earth); text-decoration: none;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--clay); }
+
+    /* CTA de navegação: underline em argila */
+    .nav-cta {
+      font-family: var(--ff-ui); font-size: 13px; font-weight: 400;
+      color: var(--bark); text-decoration: none; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--clay); padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-cta:hover { color: var(--clay); }
+
+    /* ════════════════════════════════════════════
+       HERO
+       Grid de duas colunas: copy à esquerda,
+       ilustração arquitetônica à direita.
+       Background: areia com gradientes radiais
+       sutis de argila e musgo.
+    ════════════════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      background-color: var(--sand);
+      /* Dois gradientes radiais criam profundidade sem fotos */
+      background-image:
+        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(196,149,106,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(107,124,92,0.1) 0%, transparent 60%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 120px 60px 80px;
+      position: relative; overflow: hidden;
+    }
+
+    /* Decoração SVG ao fundo do hero (linhas curvas + folhas) */
+    .hero-deco {
+      position: absolute; right: -40px; top: 50%;
+      transform: translateY(-50%);
+      width: 55vw; height: 90vh;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    /* ── Copy do hero ── */
+    .hero-left { position: relative; z-index: 2; }
+
+    /* Eyebrow: linha + texto em caixa alta, cor argila */
+    .hero-eyebrow {
+      font-family: var(--ff-ui); font-size: 12px; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+      opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 40px; height: 1px; background: var(--clay);
+    }
+
+    /* Headline principal: Fraunces grande, peso leve, italic no destaque */
+    .hero-h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(52px, 7vw, 96px); /* Fluido entre 52px e 96px */
+      font-weight: 300; line-height: 1.0;
+      color: var(--bark); letter-spacing: -0.02em;
+      opacity: 0; animation: fadeUp 0.9s 0.35s forwards;
+    }
+    .hero-h1 em { font-style: italic; color: var(--clay-dk); font-weight: 300; }
+
+    .hero-sub {
+      font-size: 19px; font-weight: 300; line-height: 1.6;
+      color: var(--earth); max-width: 420px; margin-top: 28px;
+      opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
+    }
+
+    /* Botões do hero lado a lado */
+    .hero-actions {
+      display: flex; align-items: center; gap: 32px; margin-top: 48px;
+      opacity: 0; animation: fadeUp 0.9s 0.65s forwards;
+    }
+
+    /* Botão primário: casca escura, hover argila */
+    .btn-primary {
+      font-family: var(--ff-ui); font-size: 13px; font-weight: 400;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--bark); color: var(--cream);
+      border: none; padding: 16px 36px; cursor: none;
+      text-decoration: none; display: inline-block;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--clay-dk); transform: translateY(-2px); }
+
+    /* Botão ghost: itálico com underline */
+    .btn-ghost {
+      font-family: var(--ff-body); font-size: 17px; font-style: italic;
+      color: var(--earth); text-decoration: none;
+      border-bottom: 1px solid currentColor; padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--clay-dk); }
+
+    /* Estatísticas numéricas em Fraunces */
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 64px;
+      opacity: 0; animation: fadeUp 0.9s 0.8s forwards;
+    }
+    .stat-num {
+      font-family: var(--ff-display); font-size: 36px; font-weight: 300;
+      color: var(--bark); line-height: 1; display: block;
+    }
+    .stat-label {
+      font-family: var(--ff-ui); font-size: 11px; font-weight: 300;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone);
+      display: block; margin-top: 4px;
+    }
+
+    /* ── Lado direito: ilustração ── */
+    .hero-right {
+      position: relative; z-index: 2;
+      display: flex; justify-content: flex-end; align-items: center;
+    }
+
+    .hero-img-wrap {
+      position: relative;
+      opacity: 0; animation: fadeIn 1.2s 0.4s forwards;
+    }
+
+    /* Container da ilustração SVG da mansão */
+    .hero-img-main {
+      width: 420px; height: 560px;
+      display: block; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #C4956A 0%, #9B6A3E 40%, #5C4033 100%);
+    }
+    .hero-img-main svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    /* Tag poética sobreposta à ilustração */
+    .hero-img-tag {
+      position: absolute; bottom: -20px; left: -40px;
+      background: var(--moss); color: var(--cream);
+      padding: 20px 24px; max-width: 200px;
+      font-family: var(--ff-body); font-size: 15px; font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* Badge circular de premiação */
+    .hero-badge {
+      position: absolute; top: 24px; right: -24px;
+      width: 88px; height: 88px;
+      background: var(--sand); border: 1px solid var(--sand-dk); border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: var(--ff-ui); font-size: 10px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--earth);
+      line-height: 1.4; text-align: center;
+    }
+    .hero-badge strong {
+      font-family: var(--ff-display); font-size: 22px;
+      font-weight: 300; color: var(--clay-dk); display: block;
+    }
+
+    /* Indicador de scroll animado (linha que pulsa) */
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 60px;
+      font-family: var(--ff-ui); font-size: 11px; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone);
+      display: flex; align-items: center; gap: 12px;
+      opacity: 0; animation: fadeIn 1s 1.2s forwards;
+    }
+    .scroll-line {
+      width: 48px; height: 1px; background: var(--stone);
+      animation: scrollPulse 2s 1.5s infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleX(1); opacity: 1; }
+      50% { transform: scaleX(0.5); opacity: 0.4; }
+    }
+
+    /* ════════════════════════════════════════════
+       FEATURES — Diferenciais competitivos
+       Grid de 3 colunas com cards em areia.
+       Numeração decorativa grande + ícone SVG
+       + título Fraunces + texto Cormorant.
+    ════════════════════════════════════════════ */
+    #features { padding: 120px 60px; background: var(--ivory); position: relative; }
+
+    .features-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: end; margin-bottom: 80px;
+    }
+
+    /* Tag de seção com traço em argila */
+    .section-tag {
+      font-family: var(--ff-ui); font-size: 11px; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    }
+    .section-tag::before { content: '—'; }
+
+    /* H2 fluido com italic em argila escura */
+    .section-h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(36px, 4vw, 56px); font-weight: 300; line-height: 1.1;
+      color: var(--bark);
+    }
+    .section-h2 em { font-style: italic; color: var(--clay-dk); }
+
+    .section-body {
+      font-size: 17px; font-weight: 300; color: var(--earth);
+      line-height: 1.8; max-width: 400px; align-self: end;
+    }
+
+    /* Grid de cards com espaçamento mínimo (2px de gap = "juntura") */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+    .feature-card {
+      background: var(--sand); padding: 48px 36px;
+      position: relative; overflow: hidden;
+      transition: background 0.3s;
+    }
+    .feature-card:hover { background: var(--sand-dk); }
+    .feature-card:hover .feat-icon { transform: scale(1.1) rotate(-5deg); }
+
+    /* Número decorativo grande no canto — muda de cor no hover */
+    .feat-num {
+      font-family: var(--ff-display); font-size: 72px; font-weight: 300;
+      color: var(--sand-dk); position: absolute; top: 16px; right: 24px;
+      line-height: 1; user-select: none;
+      transition: color 0.3s;
+    }
+    .feature-card:hover .feat-num { color: var(--clay); opacity: 0.3; }
+
+    .feat-icon { width: 48px; height: 48px; margin-bottom: 24px; transition: transform 0.3s ease; }
+
+    .feat-title {
+      font-family: var(--ff-display); font-size: 22px; font-weight: 400;
+      color: var(--bark); margin-bottom: 12px; line-height: 1.2;
+    }
+    .feat-title em { font-style: italic; color: var(--clay-dk); }
+    .feat-text { font-size: 15px; font-weight: 300; color: var(--earth); line-height: 1.7; }
+
+    /* ════════════════════════════════════════════
+       GALLERY — Portfólio de propriedades
+       Grid editorial assimétrico:
+       - Item 1: ocupa 2 colunas E 2 linhas (destaque)
+       - Itens 2-5: uma célula cada
+       Todas as "fotos" são SVGs ilustrados
+    ════════════════════════════════════════════ */
+    #gallery { padding: 120px 60px; background: var(--bark); }
+
+    .gallery-header { margin-bottom: 60px; }
+    .gallery-header .section-tag { color: var(--clay); }
+    .gallery-header .section-h2 { color: var(--cream); }
+    .gallery-header .section-h2 em { color: var(--clay); }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 280px 280px;
+      gap: 3px; /* Juntura mínima entre imagens */
+    }
+
+    .gallery-item {
+      position: relative; overflow: hidden; cursor: none;
+      background: var(--earth);
+    }
+    /* Item principal ocupa altura total (2 linhas) */
+    .gallery-item:first-child { grid-row: 1 / 3; }
+
+    /* Inner permite o scale sem overflow */
+    .gallery-item-inner {
+      position: absolute; inset: 0;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .gallery-item:hover .gallery-item-inner { transform: scale(1.05); }
+
+    .gallery-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+
+    /* Gradientes base para cada ilustração */
+    .g1 { background: linear-gradient(160deg, #6B5040 0%, #3D2B1A 60%, #2E1F10 100%); }
+    .g2 { background: linear-gradient(135deg, #8B7355 0%, #5C4230 100%); }
+    .g3 { background: linear-gradient(135deg, #7A6548 0%, #4A3520 100%); }
+    .g4 { background: linear-gradient(135deg, #9E8060 0%, #6B4F30 100%); }
+    .g5 { background: linear-gradient(135deg, #5C4D3A 0%, #3A2E1E 100%); }
+
+    /* Overlay com informações — aparece no hover */
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(46,33,24,0.85) 0%, transparent 50%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 24px; opacity: 0; transition: opacity 0.4s;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+    .gallery-label {
+      font-family: var(--ff-display); font-size: 18px; font-weight: 300;
+      color: var(--cream); font-style: italic; margin-bottom: 4px;
+    }
+    .gallery-meta {
+      font-family: var(--ff-ui); font-size: 11px; font-weight: 300;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--clay);
+    }
+
+    .gallery-bg svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    /* ════════════════════════════════════════════
+       FAQ — Perguntas frequentes
+       Layout de duas colunas: sticky à esquerda
+       (seção title + ilustração botânica SVG),
+       lista de acordeão à direita.
+    ════════════════════════════════════════════ */
+    #faq { padding: 120px 60px; background: var(--sand); }
+
+    .faq-inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+
+    /* Coluna esquerda fica "grudada" ao rolar */
+    .faq-left { position: sticky; top: 120px; }
+    .faq-deco { margin-top: 40px; opacity: 0.6; }
+
+    .faq-list { list-style: none; }
+
+    .faq-item {
+      border-top: 1px solid var(--sand-dk); padding: 0; overflow: hidden;
+    }
+    .faq-item:last-child { border-bottom: 1px solid var(--sand-dk); }
+
+    /* Botão de pergunta */
+    .faq-q {
+      width: 100%; background: none; border: none; cursor: none;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 0; text-align: left; gap: 16px;
+      font-family: var(--ff-body); font-size: 19px; font-weight: 400;
+      color: var(--bark); line-height: 1.3; transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--clay-dk); }
+
+    /* Ícone circular + / × */
+    .faq-icon {
+      width: 24px; height: 24px; flex-shrink: 0;
+      border: 1px solid var(--stone); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s; color: var(--stone); font-size: 16px;
+    }
+    /* Estado aberto: fundo argila + rotação 45° (+ vira ×) */
+    .faq-item.open .faq-icon {
+      background: var(--clay); border-color: var(--clay); color: var(--cream);
+      transform: rotate(45deg);
+    }
+
+    /* Animação de altura com max-height */
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .faq-item.open .faq-answer { max-height: 300px; }
+
+    .faq-answer-inner {
+      padding: 0 0 24px;
+      font-size: 16px; font-weight: 300; color: var(--earth); line-height: 1.8;
+    }
+
+    /* ════════════════════════════════════════════
+       CTA — Chamada para ação final
+       Fundo argila escura com overlay radial sutil.
+       Decoração SVG de linhas curvas e círculos.
+       Formulário de captura de e-mail.
+    ════════════════════════════════════════════ */
+    #cta { padding: 140px 60px; background: var(--clay-dk); position: relative; overflow: hidden; text-align: center; }
+
+    /* Brilho central sutil */
+    #cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(255,245,230,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* SVG decorativo de fundo do CTA */
+    .cta-deco { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; opacity: 0.06; }
+
+    .cta-tag {
+      font-family: var(--ff-ui); font-size: 11px; font-weight: 300;
+      letter-spacing: 0.16em; text-transform: uppercase; color: rgba(250,246,238,0.6);
+      margin-bottom: 24px;
+    }
+
+    .cta-h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(42px, 6vw, 80px); font-weight: 300; line-height: 1.0;
+      color: var(--cream); margin-bottom: 24px; letter-spacing: -0.02em;
+    }
+    .cta-h2 em { font-style: italic; }
+
+    .cta-sub {
+      font-size: 18px; font-weight: 300; color: rgba(250,246,238,0.75);
+      max-width: 480px; margin: 0 auto 48px; line-height: 1.7;
+    }
+
+    /* Formulário inline: input + botão sem gap */
+    .cta-form { display: flex; justify-content: center; gap: 0; max-width: 480px; margin: 0 auto; }
+
+    .cta-input {
+      flex: 1;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+      border-right: none; color: var(--cream);
+      padding: 16px 20px; font-family: var(--ff-ui); font-size: 14px;
+      outline: none; transition: background 0.2s;
+    }
+    .cta-input::placeholder { color: rgba(255,255,255,0.45); }
+    .cta-input:focus { background: rgba(255,255,255,0.18); }
+
+    .btn-cta {
+      background: var(--bark); color: var(--cream); border: 1px solid var(--bark);
+      padding: 16px 28px; font-family: var(--ff-ui); font-size: 13px;
+      font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: none; white-space: nowrap;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-cta:hover { background: #1a0f08; transform: translateY(-1px); }
+
+    .cta-note {
+      font-family: var(--ff-ui); font-size: 12px; font-weight: 300;
+      color: rgba(250,246,238,0.45); margin-top: 16px;
+    }
+
+    /* ════════════════════════════════════════════
+       FOOTER
+       Linha única com logo, links e copyright.
+       Fundo casca (bark) — mais escuro que o CTA.
+    ════════════════════════════════════════════ */
+    footer {
+      background: var(--bark); color: var(--stone);
+      padding: 48px 60px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--ff-ui); font-size: 13px; font-weight: 300;
+    }
+    .footer-logo {
+      font-family: var(--ff-display); font-size: 20px; font-weight: 300;
+      color: var(--cream); letter-spacing: 0.04em;
+    }
+    .footer-logo span { color: var(--clay); font-style: italic; }
+
+    .footer-links { display: flex; gap: 28px; list-style: none; }
+    .footer-links a {
+      color: var(--stone); text-decoration: none;
+      letter-spacing: 0.06em; text-transform: uppercase; font-size: 11px;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--clay); }
+    .footer-copy { color: var(--stone); opacity: 0.6; font-size: 12px; }
+
+    /* ─────────────────────────────────────────────
+       ANIMAÇÕES — Keyframes base
+       fadeUp: elementos sobem 24px ao aparecer
+       fadeIn: fade simples (sem movimento)
+    ───────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ─────────────────────────────────────────────
+       SCROLL REVEAL
+       Classe .reveal = estado inicial (invisível).
+       JS adiciona .visible quando o elemento
+       entra na viewport via IntersectionObserver.
+       Delays escalonados para efeito cascata.
+    ───────────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─────────────────────────────────────────────
+       RESPONSIVO — Mobile (< 900px)
+       Layout colapsa para uma coluna.
+       Hero right (ilustração) é ocultado.
+       Gallery vira grid 2 colunas.
+    ───────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; }
+      .nav-links { display: none; } /* Menu hamburguer omitido neste protótipo */
+      #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
+      .hero-right { display: none; }
+      .features-header { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-item:first-child { grid-row: auto; }
+      .faq-inner { grid-template-columns: 1fr; }
+      .faq-left { position: static; }
+      #features, #gallery, #faq, #cta { padding: 80px 24px; }
+      .cta-form { flex-direction: column; }
+      .cta-input { border-right: 1px solid rgba(255,255,255,0.25); border-bottom: none; }
+      footer { flex-direction: column; gap: 24px; text-align: center; padding: 40px 24px; }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Elemento do cursor personalizado (posicionado via JS) -->
+<div id="cursor"></div>
+
+<!-- ══════════════════════════════════════════════════
+     NAVEGAÇÃO
+     Logo + links internos + CTA "Agendar visita"
+     A transparência inicial é gerenciada pelo
+     mix-blend-mode: multiply no CSS.
+     O fundo sólido é adicionado via JS ao rolar.
+══════════════════════════════════════════════════ -->
+<nav>
+  <a class="nav-logo" href="#">Terra <span>Nobre</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Serviços</a></li>
+    <li><a href="#gallery">Portfólio</a></li>
+    <li><a href="#faq">Dúvidas</a></li>
+  </ul>
+  <a class="nav-cta" href="#cta">Agendar visita</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+     Seção de entrada com duas colunas:
+     • Esquerda: copy + estatísticas (animados com CSS)
+     • Direita: ilustração SVG de mansão
+     • Fundo: decoração SVG com curvas e folhas
+══════════════════════════════════════════════════ -->
+<section id="hero">
+
+  <!-- Decoração vetorial de fundo do hero -->
+  <svg class="hero-deco" viewBox="0 0 600 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Linha tracejada curva: referência ao caminho da vida / jornada -->
+    <path d="M80 600 Q 200 520 300 400 Q 380 300 420 180 Q 460 80 380 40"
+          stroke="#9B6A3E" stroke-width="1.5" fill="none" stroke-dasharray="4 8"/>
+    <!-- Círculos concêntricos: referência a anéis de árvore / tempo -->
+    <circle cx="300" cy="350" r="220" stroke="#C4956A" stroke-width="0.8" fill="none"/>
+    <circle cx="300" cy="350" r="180" stroke="#C4956A" stroke-width="0.4" fill="none"/>
+    <!-- Segunda curva orgânica em musgo -->
+    <path d="M 100 500 C 150 450 250 480 300 420 C 350 360 360 280 400 200"
+          stroke="#6B7C5C" stroke-width="1" fill="none"/>
+    <!-- Motivos de folhas no canto superior -->
+    <path d="M480 180 Q 500 140 520 180 Q 500 200 480 180Z" fill="#9B6A3E" opacity="0.5"/>
+    <path d="M460 200 Q 480 160 500 200 Q 480 220 460 200Z" fill="#9B6A3E" opacity="0.3"/>
+    <path d="M440 160 Q 460 120 480 160 Q 460 180 440 160Z" fill="#9B6A3E" opacity="0.2"/>
+  </svg>
+
+  <!-- COPY DO HERO -->
+  <div class="hero-left">
+    <!-- Eyebrow: contexto e credibilidade -->
+    <p class="hero-eyebrow">Imóveis com alma — est. 2011</p>
+
+    <!-- Headline principal: proposta de valor em 6 palavras -->
+    <h1 class="hero-h1">
+      Onde a terra<br>
+      conta uma<br>
+      <em>história.</em>
+    </h1>
+
+    <!-- Subtítulo: expande o conceito sem repetir -->
+    <p class="hero-sub">
+      Selecionamos propriedades com caráter, história e beleza singular.
+      Cada espaço que representamos carrega a marca do tempo e a beleza do genuíno.
+    </p>
+
+    <!-- CTAs: primário (ver) + secundário (entender como) -->
+    <div class="hero-actions">
+      <a href="#gallery" class="btn-primary">Ver propriedades</a>
+      <a href="#features" class="btn-ghost">Como trabalhamos</a>
+    </div>
+
+    <!-- Prova social em números -->
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">340+</span>
+        <span class="stat-label">Propriedades</span>
+      </div>
+      <div>
+        <span class="stat-num">13</span>
+        <span class="stat-label">Anos de atuação</span>
+      </div>
+      <div>
+        <span class="stat-num">98%</span>
+        <span class="stat-label">Satisfação</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ILUSTRAÇÃO DO HERO -->
+  <!-- Todos os "imóveis" são SVGs desenhados à mão — sem stock photos -->
+  <div class="hero-right">
+    <div class="hero-img-wrap">
+
+      <!-- Container da ilustração arquitetônica principal -->
+      <div class="hero-img-main">
+        <svg viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
+          <rect width="420" height="560" fill="url(#heroGrad)"/>
+          <defs>
+            <linearGradient id="heroGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#C4956A"/>
+              <stop offset="50%" stop-color="#9B6A3E"/>
+              <stop offset="100%" stop-color="#5C4033"/>
+            </linearGradient>
+          </defs>
+          <!-- Chão -->
+          <rect x="0" y="420" width="420" height="140" fill="rgba(46,33,24,0.5)"/>
+          <!-- Corpo principal da casa -->
+          <rect x="80" y="220" width="260" height="200"
+                fill="rgba(250,246,238,0.15)" stroke="rgba(250,246,238,0.4)" stroke-width="1.5"/>
+          <!-- Telhado triangular -->
+          <polygon points="60,220 210,100 360,220"
+                   fill="rgba(92,64,51,0.8)" stroke="rgba(250,246,238,0.5)" stroke-width="1.5"/>
+          <!-- Chaminé -->
+          <rect x="260" y="120" width="28" height="70"
+                fill="rgba(92,64,51,0.9)" stroke="rgba(250,246,238,0.3)" stroke-width="1"/>
+          <!-- Porta principal -->
+          <rect x="178" y="330" width="64" height="90"
+                fill="rgba(155,106,62,0.6)" stroke="rgba(250,246,238,0.5)" stroke-width="1.5"/>
+          <!-- Maçaneta -->
+          <circle cx="235" cy="375" r="4" fill="rgba(250,246,238,0.7)"/>
+          <!-- Janela esquerda (com divisória em cruz) -->
+          <rect x="100" y="260" width="60" height="55"
+                fill="rgba(250,246,238,0.1)" stroke="rgba(250,246,238,0.45)" stroke-width="1.2"/>
+          <line x1="130" y1="260" x2="130" y2="315" stroke="rgba(250,246,238,0.4)" stroke-width="0.8"/>
+          <line x1="100" y1="287" x2="160" y2="287" stroke="rgba(250,246,238,0.4)" stroke-width="0.8"/>
+          <!-- Janela direita -->
+          <rect x="260" y="260" width="60" height="55"
+                fill="rgba(250,246,238,0.1)" stroke="rgba(250,246,238,0.45)" stroke-width="1.2"/>
+          <line x1="290" y1="260" x2="290" y2="315" stroke="rgba(250,246,238,0.4)" stroke-width="0.8"/>
+          <line x1="260" y1="287" x2="320" y2="287" stroke="rgba(250,246,238,0.4)" stroke-width="0.8"/>
+          <!-- Árvores laterais -->
+          <ellipse cx="50" cy="390" rx="34" ry="50" fill="rgba(107,124,92,0.6)"/>
+          <rect x="46" y="420" width="8" height="40" fill="rgba(92,64,51,0.5)"/>
+          <ellipse cx="370" cy="380" rx="28" ry="44" fill="rgba(107,124,92,0.5)"/>
+          <!-- Caminho até a porta -->
+          <path d="M 178 420 Q 175 460 165 510 Q 162 540 165 560 L 255 560
+                   Q 258 540 255 510 Q 245 460 242 420 Z"
+                fill="rgba(196,149,106,0.25)" stroke="rgba(250,246,238,0.2)" stroke-width="0.8"/>
+          <!-- Estrelas no céu -->
+          <circle cx="80" cy="60" r="2" fill="rgba(250,246,238,0.5)"/>
+          <circle cx="340" cy="40" r="1.5" fill="rgba(250,246,238,0.4)"/>
+          <circle cx="180" cy="80" r="1" fill="rgba(250,246,238,0.3)"/>
+          <circle cx="300" cy="70" r="1.5" fill="rgba(250,246,238,0.4)"/>
+          <!-- Fumaça da chaminé (caminho curvo) -->
+          <path d="M 274 120 Q 268 100 278 85 Q 285 70 275 55"
+                stroke="rgba(250,246,238,0.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- Tag poética sobre a ilustração -->
+      <div class="hero-img-tag">"Cada pedra guarda o eco das estações"</div>
+
+      <!-- Badge de premiação -->
+      <div class="hero-badge">
+        <strong>12</strong>
+        Prêmios de excelência
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicador de scroll -->
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Desça para explorar
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     FEATURES — "O que nos torna diferentes"
+     6 diferenciais competitivos em grid 3×2.
+     Cada card tem: número decorativo, ícone SVG,
+     título em Fraunces e texto em Cormorant.
+══════════════════════════════════════════════════ -->
+<section id="features">
+
+  <div class="features-header">
+    <div>
+      <p class="section-tag reveal">Nossa filosofia</p>
+      <h2 class="section-h2 reveal reveal-delay-1">O que nos torna <em>diferentes</em></h2>
+    </div>
+    <p class="section-body reveal reveal-delay-2">
+      Não somos uma imobiliária comum. Somos curadores de espaços que acreditam
+      que um lar deve refletir a alma de quem o habita — não apenas o saldo da
+      conta bancária.
+    </p>
+  </div>
+
+  <div class="features-grid">
+
+    <!-- Feature 01: Curadoria rigorosa -->
+    <div class="feature-card reveal">
+      <span class="feat-num">01</span>
+      <svg class="feat-icon" viewBox="0 0 48 48" fill="none">
+        <path d="M8 40V20L24 8L40 20V40" stroke="#9B6A3E" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="18" y="28" width="12" height="12" stroke="#9B6A3E" stroke-width="1.5"/>
+        <path d="M14 28Q14 20 24 18Q34 20 34 28" stroke="#C4956A" stroke-width="1" fill="none"/>
+      </svg>
+      <h3 class="feat-title">Curadoria <em>rigorosa</em></h3>
+      <p class="feat-text">
+        Cada propriedade passa por uma avaliação de três etapas: estrutural,
+        histórica e emocional. Não listamos o que não amamos.
+      </p>
+    </div>
+
+    <!-- Feature 02: Consultoria personalizada -->
+    <div class="feature-card reveal reveal-delay-1">
+      <span class="feat-num">02</span>
+      <svg class="feat-icon" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="20" r="10" stroke="#9B6A3E" stroke-width="1.5"/>
+        <path d="M24 30V44M18 44H30" stroke="#9B6A3E" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M18 18Q20 14 24 14Q28 14 30 18" stroke="#C4956A" stroke-width="1" fill="none"/>
+      </svg>
+      <h3 class="feat-title">Consultoria <em>personalizada</em></h3>
+      <p class="feat-text">
+        Um consultor dedicado acompanha cada cliente do primeiro contato às
+        chaves na mão. Sem call centers, sem processos automatizados.
+      </p>
+    </div>
+
+    <!-- Feature 03: Valorização garantida -->
+    <div class="feature-card reveal reveal-delay-2">
+      <span class="feat-num">03</span>
+      <svg class="feat-icon" viewBox="0 0 48 48" fill="none">
+        <path d="M6 36L16 26L22 32L32 18L42 28" stroke="#9B6A3E" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="42" cy="10" r="6" stroke="#C4956A" stroke-width="1"/>
+        <path d="M39 10H45M42 7V13" stroke="#C4956A" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+      <h3 class="feat-title">Valorização <em>garantida</em></h3>
+      <p class="feat-text">
+        Nosso portfólio histórico mostra valorização média de 14% ao ano.
+        Conhecemos o mercado de imóveis de caráter como ninguém.
+      </p>
+    </div>
+
+    <!-- Feature 04: Rede de confiança -->
+    <div class="feature-card reveal reveal-delay-3">
+      <span class="feat-num">04</span>
+      <svg class="feat-icon" viewBox="0 0 48 48" fill="none">
+        <path d="M8 36Q8 28 24 24Q40 28 40 36" stroke="#9B6A3E" stroke-width="1.5"
+              stroke-linecap="round" fill="none"/>
+        <circle cx="24" cy="16" r="8" stroke="#9B6A3E" stroke-width="1.5"/>
+        <path d="M16 44Q16 36 24 36Q32 36 32 44" stroke="#C4956A" stroke-width="1" fill="none"/>
+      </svg>
+      <h3 class="feat-title">Rede de <em>confiança</em></h3>
+      <p class="feat-text">
+        Trabalha conosco uma rede de arquitetos, restauradores, paisagistas
+        e artistas que transformam casas em obras de arte habitáveis.
+      </p>
+    </div>
+
+    <!-- Feature 05: Imóveis exclusivos -->
+    <div class="feature-card reveal reveal-delay-1">
+      <span class="feat-num">05</span>
+      <svg class="feat-icon" viewBox="0 0 48 48" fill="none">
+        <path d="M24 6L28 16H40L30 23L34 34L24 27L14 34L18 23L8 16H20Z"
+              stroke="#9B6A3E" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+        <path d="M24 12L26.5 19H34L28 23.5L30 30L24 26L18 30L20 23.5L14 19H21.5Z"
+              fill="rgba(196,149,106,0.2)"/>
+      </svg>
+      <h3 class="feat-title">Imóveis <em>exclusivos</em></h3>
+      <p class="feat-text">
+        Mais de 60% do nosso portfólio nunca chega às plataformas públicas.
+        São negócios fechados entre clientes que confiam no nosso julgamento.
+      </p>
+    </div>
+
+    <!-- Feature 06: Processo transparente -->
+    <div class="feature-card reveal reveal-delay-2">
+      <span class="feat-num">06</span>
+      <svg class="feat-icon" viewBox="0 0 48 48" fill="none">
+        <rect x="6" y="10" width="36" height="28" rx="2" stroke="#9B6A3E" stroke-width="1.5"/>
+        <path d="M6 20H42" stroke="#9B6A3E" stroke-width="1" stroke-dasharray="3 3"/>
+        <path d="M16 30H22M26 30H32" stroke="#C4956A" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M18 14H30" stroke="#9B6A3E" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+      <h3 class="feat-title">Processo <em>transparente</em></h3>
+      <p class="feat-text">
+        Sem taxas escondidas, sem surpresas jurídicas. Nossa equipe
+        especializada garante que cada transação seja clara e segura.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     GALLERY — Portfólio de propriedades fictícias
+     5 imóveis representados por ilustrações SVG:
+     1. Fazenda Mata Branca (Chapada dos Veadeiros)
+     2. Casa Serra Verde (Petrópolis)
+     3. Solar dos Arcos (Tiradentes, séc. XVIII)
+     4. Loft Armazém 7 (Vila Madalena, SP)
+     5. Chalé Pedra Branca (Campos do Jordão)
+══════════════════════════════════════════════════ -->
+<section id="gallery">
+  <div class="gallery-header">
+    <p class="section-tag reveal">Portfólio selecionado</p>
+    <h2 class="section-h2 reveal reveal-delay-1">Espaços que <em>respiram</em> história</h2>
+  </div>
+
+  <div class="gallery-grid reveal">
+
+    <!-- Item 1: FAZENDA MATA BRANCA — ocupa 2 linhas (grid-row: 1/3) -->
+    <div class="gallery-item">
+      <div class="gallery-item-inner">
+        <div class="gallery-bg g1">
+          <!-- Ilustração: fazenda rural com montanhas e lua -->
+          <svg viewBox="0 0 400 560" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="560" fill="url(#g1g)"/>
+            <defs>
+              <linearGradient id="g1g" x1="0" y1="0" x2="0.5" y2="1">
+                <stop offset="0%" stop-color="#8B6040"/>
+                <stop offset="100%" stop-color="#2E1F10"/>
+              </linearGradient>
+            </defs>
+            <rect x="50" y="280" width="300" height="180" fill="rgba(240,220,180,0.12)"
+                  stroke="rgba(240,220,180,0.35)" stroke-width="1.5"/>
+            <polygon points="30,280 200,160 370,280" fill="rgba(120,80,50,0.7)"
+                     stroke="rgba(240,220,180,0.4)" stroke-width="1.5"/>
+            <rect x="160" y="360" width="80" height="100" fill="rgba(155,106,62,0.5)"
+                  stroke="rgba(240,220,180,0.4)" stroke-width="1.2"/>
+            <rect x="70" y="310" width="70" height="60" fill="rgba(240,220,180,0.08)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1"/>
+            <line x1="105" y1="310" x2="105" y2="370" stroke="rgba(240,220,180,0.25)" stroke-width="0.8"/>
+            <line x1="70" y1="340" x2="140" y2="340" stroke="rgba(240,220,180,0.25)" stroke-width="0.8"/>
+            <rect x="260" y="310" width="70" height="60" fill="rgba(240,220,180,0.08)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1"/>
+            <line x1="295" y1="310" x2="295" y2="370" stroke="rgba(240,220,180,0.25)" stroke-width="0.8"/>
+            <line x1="260" y1="340" x2="330" y2="340" stroke="rgba(240,220,180,0.25)" stroke-width="0.8"/>
+            <path d="M0 280 L60 180 L120 240 L180 140 L240 200 L300 150 L360 200 L400 180 L400 280Z"
+                  fill="rgba(60,40,20,0.4)"/>
+            <ellipse cx="20" cy="430" rx="20" ry="32" fill="rgba(80,100,65,0.7)"/>
+            <rect x="17" y="455" width="6" height="25" fill="rgba(70,50,30,0.5)"/>
+            <ellipse cx="385" cy="420" rx="18" ry="28" fill="rgba(80,100,65,0.6)"/>
+            <circle cx="340" cy="80" r="22" fill="rgba(240,220,180,0.15)"
+                    stroke="rgba(240,220,180,0.3)" stroke-width="0.8"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-overlay">
+        <p class="gallery-label">Fazenda Mata Branca</p>
+        <span class="gallery-meta">Chapada dos Veadeiros · 8.400 m²</span>
+      </div>
+    </div>
+
+    <!-- Item 2: CASA SERRA VERDE — residência moderna -->
+    <div class="gallery-item">
+      <div class="gallery-item-inner">
+        <div class="gallery-bg g2">
+          <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="280" fill="url(#g2g)"/>
+            <defs>
+              <linearGradient id="g2g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#A08060"/>
+                <stop offset="100%" stop-color="#4A3520"/>
+              </linearGradient>
+            </defs>
+            <rect x="40" y="140" width="220" height="110" fill="rgba(240,220,180,0.1)"
+                  stroke="rgba(240,220,180,0.35)" stroke-width="1.5"/>
+            <rect x="40" y="100" width="140" height="40" fill="rgba(240,220,180,0.08)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1"/>
+            <rect x="100" y="180" width="60" height="70" fill="rgba(155,106,62,0.4)"
+                  stroke="rgba(240,220,180,0.4)" stroke-width="1.2"/>
+            <rect x="50" y="155" width="40" height="35" fill="rgba(240,220,180,0.06)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1"/>
+            <rect x="200" y="155" width="40" height="35" fill="rgba(240,220,180,0.06)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1"/>
+            <ellipse cx="240" cy="210" rx="30" ry="18" fill="rgba(80,120,130,0.4)"
+                     stroke="rgba(150,200,220,0.3)" stroke-width="1"/>
+            <ellipse cx="30" cy="240" rx="22" ry="30" fill="rgba(80,100,65,0.65)"/>
+            <ellipse cx="280" cy="230" rx="18" ry="26" fill="rgba(80,100,65,0.55)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-overlay">
+        <p class="gallery-label">Casa Serra Verde</p>
+        <span class="gallery-meta">Petrópolis · 650 m²</span>
+      </div>
+    </div>
+
+    <!-- Item 3: SOLAR DOS ARCOS — colonial séc. XVIII -->
+    <div class="gallery-item">
+      <div class="gallery-item-inner">
+        <div class="gallery-bg g3">
+          <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="280" fill="url(#g3g)"/>
+            <defs>
+              <linearGradient id="g3g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#7A6548"/>
+                <stop offset="100%" stop-color="#4A3520"/>
+              </linearGradient>
+            </defs>
+            <rect x="30" y="100" width="240" height="150" fill="rgba(240,220,180,0.08)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1.5"/>
+            <!-- Porta com arco -->
+            <path d="M120 250 L120 160 Q150 130 180 160 L180 250Z"
+                  fill="rgba(155,106,62,0.4)" stroke="rgba(240,220,180,0.4)" stroke-width="1.2"/>
+            <!-- Janelas arqueadas -->
+            <path d="M50 180 L50 140 Q70 120 90 140 L90 180Z"
+                  fill="rgba(240,220,180,0.06)" stroke="rgba(240,220,180,0.35)" stroke-width="1"/>
+            <path d="M210 180 L210 140 Q230 120 250 140 L250 180Z"
+                  fill="rgba(240,220,180,0.06)" stroke="rgba(240,220,180,0.35)" stroke-width="1"/>
+            <!-- Colunas -->
+            <rect x="30" y="100" width="8" height="150" fill="rgba(240,220,180,0.15)"/>
+            <rect x="262" y="100" width="8" height="150" fill="rgba(240,220,180,0.15)"/>
+            <line x1="30" y1="100" x2="270" y2="100" stroke="rgba(240,220,180,0.4)" stroke-width="1.5"/>
+            <!-- Vegetação decorativa -->
+            <ellipse cx="280" cy="240" rx="16" ry="22" fill="rgba(80,100,65,0.6)"/>
+            <ellipse cx="20" cy="245" rx="14" ry="20" fill="rgba(80,100,65,0.55)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-overlay">
+        <p class="gallery-label">Solar dos Arcos</p>
+        <span class="gallery-meta">Tiradentes · Séc. XVIII restaurado</span>
+      </div>
+    </div>
+
+    <!-- Item 4: LOFT ARMAZÉM 7 — industrial São Paulo -->
+    <div class="gallery-item">
+      <div class="gallery-item-inner">
+        <div class="gallery-bg g4">
+          <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="280" fill="url(#g4g)"/>
+            <defs>
+              <linearGradient id="g4g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#9E8060"/>
+                <stop offset="100%" stop-color="#5A3E28"/>
+              </linearGradient>
+            </defs>
+            <!-- Três painéis de janelas industriais -->
+            <rect x="10" y="90" width="90" height="120" fill="rgba(240,220,180,0.1)"
+                  stroke="rgba(240,220,180,0.35)" stroke-width="2"/>
+            <line x1="55" y1="90" x2="55" y2="210" stroke="rgba(240,220,180,0.25)" stroke-width="1"/>
+            <line x1="10" y1="150" x2="100" y2="150" stroke="rgba(240,220,180,0.25)" stroke-width="1"/>
+            <rect x="110" y="90" width="90" height="120" fill="rgba(240,220,180,0.1)"
+                  stroke="rgba(240,220,180,0.35)" stroke-width="2"/>
+            <line x1="155" y1="90" x2="155" y2="210" stroke="rgba(240,220,180,0.25)" stroke-width="1"/>
+            <line x1="110" y1="150" x2="200" y2="150" stroke="rgba(240,220,180,0.25)" stroke-width="1"/>
+            <rect x="210" y="90" width="80" height="120" fill="rgba(240,220,180,0.1)"
+                  stroke="rgba(240,220,180,0.35)" stroke-width="2"/>
+            <line x1="250" y1="90" x2="250" y2="210" stroke="rgba(240,220,180,0.25)" stroke-width="1"/>
+            <!-- Vigas de ferro -->
+            <line x1="0" y1="80" x2="300" y2="80" stroke="rgba(240,220,180,0.4)" stroke-width="2.5"/>
+            <line x1="0" y1="40" x2="300" y2="40" stroke="rgba(240,220,180,0.2)" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-overlay">
+        <p class="gallery-label">Loft Armazém 7</p>
+        <span class="gallery-meta">São Paulo · Vila Madalena</span>
+      </div>
+    </div>
+
+    <!-- Item 5: CHALÉ PEDRA BRANCA — serrano -->
+    <div class="gallery-item">
+      <div class="gallery-item-inner">
+        <div class="gallery-bg g5">
+          <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="280" fill="url(#g5g)"/>
+            <defs>
+              <linearGradient id="g5g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#5C4D3A"/>
+                <stop offset="100%" stop-color="#2A1E12"/>
+              </linearGradient>
+            </defs>
+            <rect x="60" y="160" width="180" height="120" fill="rgba(240,220,180,0.1)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1.2"/>
+            <polygon points="40,160 150,80 260,160" fill="rgba(100,65,40,0.7)"
+                     stroke="rgba(240,220,180,0.35)" stroke-width="1.2"/>
+            <rect x="120" y="210" width="60" height="70" fill="rgba(155,106,62,0.45)"
+                  stroke="rgba(240,220,180,0.35)" stroke-width="1"/>
+            <rect x="80" y="180" width="45" height="40" fill="rgba(240,220,180,0.07)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1"/>
+            <rect x="175" y="180" width="45" height="40" fill="rgba(240,220,180,0.07)"
+                  stroke="rgba(240,220,180,0.3)" stroke-width="1"/>
+            <!-- Jardim florido -->
+            <ellipse cx="30" cy="268" rx="25" ry="15" fill="rgba(80,100,65,0.55)"/>
+            <ellipse cx="270" cy="265" rx="22" ry="14" fill="rgba(80,100,65,0.5)"/>
+            <ellipse cx="150" cy="275" rx="60" ry="10" fill="rgba(70,90,55,0.4)"/>
+            <!-- Céu estrelado -->
+            <circle cx="60" cy="50" r="1.5" fill="rgba(240,220,180,0.5)"/>
+            <circle cx="200" cy="30" r="2" fill="rgba(240,220,180,0.45)"/>
+            <circle cx="280" cy="70" r="1" fill="rgba(240,220,180,0.35)"/>
+          </svg>
+        </div>
+      </div>
+      <div class="gallery-overlay">
+        <p class="gallery-label">Chalé Pedra Branca</p>
+        <span class="gallery-meta">Campos do Jordão · 320 m²</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     FAQ — Perguntas frequentes
+     Layout sticky: título à esquerda fixo enquanto
+     o usuário percorre as respostas à direita.
+     Ilustração botânica SVG decora o lado esquerdo.
+══════════════════════════════════════════════════ -->
+<section id="faq">
+  <div class="faq-inner">
+
+    <!-- Coluna esquerda: sticky -->
+    <div class="faq-left">
+      <p class="section-tag reveal">Perguntas frequentes</p>
+      <h2 class="section-h2 reveal reveal-delay-1">Tudo o que você precisa <em>saber</em></h2>
+
+      <!-- Ilustração botânica: caule com folhas e flores em SVG -->
+      <svg class="faq-deco reveal reveal-delay-2" width="200" height="180" viewBox="0 0 200 180" fill="none">
+        <!-- Caule principal -->
+        <path d="M100 170 Q100 120 100 80" stroke="#9B6A3E" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Folhas alternadas -->
+        <path d="M100 130 Q75 110 55 115 Q70 100 100 110" fill="rgba(107,124,92,0.3)" stroke="#6B7C5C" stroke-width="1"/>
+        <path d="M100 110 Q130 85 150 95 Q135 105 100 100" fill="rgba(107,124,92,0.25)" stroke="#6B7C5C" stroke-width="1"/>
+        <path d="M100 90 Q68 65 60 75 Q75 60 100 75" fill="rgba(107,124,92,0.2)" stroke="#6B7C5C" stroke-width="1"/>
+        <path d="M100 150 Q122 128 140 138 Q125 145 100 140" fill="rgba(107,124,92,0.2)" stroke="#6B7C5C" stroke-width="1"/>
+        <!-- Flor no topo -->
+        <circle cx="100" cy="76" r="6" fill="rgba(196,149,106,0.6)" stroke="#C4956A" stroke-width="1"/>
+        <!-- Botões laterais -->
+        <circle cx="62" cy="116" r="4" fill="rgba(196,149,106,0.5)"/>
+        <circle cx="152" cy="96" r="3.5" fill="rgba(196,149,106,0.45)"/>
+        <circle cx="142" cy="140" r="3" fill="rgba(196,149,106,0.4)"/>
+      </svg>
+    </div>
+
+    <!-- Lista de perguntas e respostas -->
+    <ul class="faq-list reveal reveal-delay-1">
+
+      <!-- Cada item tem: botão (pergunta) + div (resposta animada) -->
+      <!-- A classe .open é toggleada via JS -->
+
+      <li class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Como funciona o processo de compra?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Nosso processo começa com uma conversa sobre o que você busca — não apenas
+            em metros quadrados, mas em sensações e estilo de vida. A partir daí, um
+            curador dedicado apresenta propriedades alinhadas ao seu perfil. Agendamos
+            visitas nos momentos mais significativos do dia (nascer do sol, final de tarde)
+            para que você sinta o espaço no seu melhor. Da proposta ao registro, acompanhamos
+            cada passo.
+          </div>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Vocês trabalham com financiamento?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Sim. Temos parceria com instituições financeiras que entendem o mercado de
+            imóveis de alto padrão. Muitos dos nossos imóveis possuem avaliações
+            atualizadas que facilitam o processo. Nossa equipe jurídico-financeira orienta
+            cada etapa, da simulação à assinatura.
+          </div>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Posso ver imóveis não listados publicamente?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Absolutamente. Mais de 60% do nosso portfólio circula apenas entre clientes
+            cadastrados. Algumas propriedades são negociadas antes mesmo de serem
+            fotografadas. Ao se cadastrar como cliente Terra Nobre, você passa a receber
+            apresentações exclusivas com prioridade de acesso.
+          </div>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Trabalham com imóveis em outros estados?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Nossa atuação principal é nas regiões Sudeste e Centro-Oeste, com foco em
+            propriedades rurais, serranas e históricas. Temos parceiros em Salvador,
+            Florianópolis e no interior de São Paulo. Para imóveis no exterior, trabalhamos
+            com uma rede selecionada de afiliados internacionais.
+          </div>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Vocês também avaliam imóveis para venda?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Sim. Se você possui uma propriedade que acredita ter caráter único, entre em
+            contato. Realizamos uma avaliação cuidadosa e, se o imóvel se enquadrar no
+            nosso padrão curatorial, integramos ao portfólio. Nossa taxa de sucesso de
+            venda é de 94% em até 90 dias.
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     CTA — Chamada para ação final
+     Fundo argila escura (clay-dk) com:
+     • Gradiente radial sutil no centro
+     • SVG decorativo de linhas e círculos
+     • Formulário de captura de e-mail
+     • Feedback visual após envio
+══════════════════════════════════════════════════ -->
+<section id="cta">
+
+  <!-- Decoração SVG de fundo: curvas, círculos e folhas estilizadas -->
+  <svg class="cta-deco" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice">
+    <path d="M0 300 Q 200 200 400 280 Q 600 360 800 240 Q 1000 120 1200 200"
+          stroke="rgba(250,246,238,1)" stroke-width="1" fill="none"/>
+    <circle cx="200" cy="100" r="80" stroke="rgba(250,246,238,1)" stroke-width="0.8" fill="none"/>
+    <circle cx="1000" cy="300" r="60" stroke="rgba(250,246,238,1)" stroke-width="0.8" fill="none"/>
+    <path d="M100 50 Q 150 20 180 60 Q 150 80 100 50Z" fill="rgba(250,246,238,1)"/>
+    <path d="M1050 200 Q 1100 170 1130 210 Q 1100 230 1050 200Z" fill="rgba(250,246,238,1)"/>
+    <path d="M600 30 Q 630 10 650 40 Q 630 55 600 30Z" fill="rgba(250,246,238,1)"/>
+  </svg>
+
+  <p class="cta-tag reveal">Comece sua história</p>
+
+  <h2 class="cta-h2 reveal reveal-delay-1">
+    Seu próximo lar<br>
+    está à sua <em>espera.</em>
+  </h2>
+
+  <p class="cta-sub reveal reveal-delay-2">
+    Deixe seu contato e um curador Terra Nobre entrará em contato
+    em até 24 horas para entender o que você busca.
+  </p>
+
+  <!-- Formulário: input inline + botão de envio -->
+  <div class="cta-form reveal reveal-delay-3">
+    <input class="cta-input" type="email" placeholder="seu@email.com.br">
+    <button class="btn-cta" onclick="handleCta()">Quero ser contactado</button>
+  </div>
+
+  <p class="cta-note reveal reveal-delay-4">Sem spam. Sem pressão. Apenas conversas com propósito.</p>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">Terra <span>Nobre</span></div>
+  <ul class="footer-links">
+    <li><a href="#">Sobre nós</a></li>
+    <li><a href="#">Portfólio</a></li>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">Contato</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 Terra Nobre Imóveis</p>
+</footer>
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+     Três comportamentos principais:
+     1. Cursor personalizado — segue o mouse
+     2. Scroll reveal — IntersectionObserver
+     3. FAQ accordion — toggle de classe .open
+     4. Nav adaptativa — fundo ao rolar
+     5. CTA — feedback de envio
+══════════════════════════════════════════════════ -->
+<script>
+
+  /* ── 1. CURSOR PERSONALIZADO ──────────────────────
+     O elemento #cursor acompanha o mouse via
+     mousemove. Em elementos interativos,
+     adiciona a classe .expand (círculo vazado).
+  ─────────────────────────────────────────────── */
+  const cursor = document.getElementById('cursor');
+
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+
+  /* Seleciona todos os elementos "hoverable" */
+  document.querySelectorAll('a, button, .gallery-item, .feature-card, .faq-q').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
+  });
+
+  /* ── 2. SCROLL REVEAL ─────────────────────────────
+     IntersectionObserver observa cada .reveal.
+     Quando 12% do elemento entra na viewport,
+     adiciona .visible (dispara a transição CSS).
+     threshold: 0.12 = revela cedo o suficiente
+     para parecer fluido sem ser antecipado.
+  ─────────────────────────────────────────────── */
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ── 3. FAQ ACCORDION ─────────────────────────────
+     Ao clicar numa pergunta:
+     - Fecha todos os outros itens abertos
+     - Abre/fecha o item atual
+     O CSS anima via max-height (0 ↔ 300px).
+  ─────────────────────────────────────────────── */
+  function toggleFaq(btn) {
+    const item    = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+
+    /* Fecha todos */
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+
+    /* Reabre se estava fechado */
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  /* ── 4. NAV ADAPTATIVA ────────────────────────────
+     No topo: transparente com blend mode.
+     Ao rolar > 60px: fundo areia translúcido
+     com backdrop-filter: blur(12px).
+  ─────────────────────────────────────────────── */
+  const nav = document.querySelector('nav');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      nav.style.background     = 'rgba(242,234,216,0.92)';
+      nav.style.backdropFilter = 'blur(12px)';
+      nav.style.boxShadow      = '0 1px 0 rgba(92,64,51,0.1)';
+      nav.style.mixBlendMode   = 'normal'; /* Remove multiply ao fixar */
+    } else {
+      nav.style.background     = 'transparent';
+      nav.style.backdropFilter = 'none';
+      nav.style.boxShadow      = 'none';
+      nav.style.mixBlendMode   = 'multiply';
+    }
+  });
+
+  /* ── 5. CTA — FEEDBACK DE ENVIO ───────────────────
+     Valida e-mail simples. Se vazio, borda vermelha.
+     Se preenchido: botão vira "enviado" em musgo.
+  ─────────────────────────────────────────────── */
+  function handleCta() {
+    const input = document.querySelector('.cta-input');
+    const btn   = document.querySelector('.btn-cta');
+
+    if (!input.value || !input.value.includes('@')) {
+      /* Feedback de erro: borda avermelhada */
+      input.style.borderColor = 'rgba(255,80,80,0.6)';
+      input.focus();
+      return;
+    }
+
+    /* Feedback de sucesso */
+    btn.textContent   = 'Mensagem enviada ✓';
+    btn.style.background = 'var(--moss)';
+    btn.style.borderColor = 'var(--moss)';
+    input.value       = '';
+    input.style.borderColor = '';
+  }
+
+</script>
+
+</body>
+</html>
